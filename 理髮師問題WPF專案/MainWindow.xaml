@@ -5,261 +5,91 @@
     Title="Sleeping Barber Simulator"
     Width="900"
     Height="600">
-
-    <Grid Background="White">
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="1.2*" />
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-
-        <Border
-            Grid.Column="0"
-            Margin="0,0,-2.5,0"
-            Panel.ZIndex="1"
-            BorderBrush="Black"
-            BorderThickness="0,0,5,0" />
-
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="1.5*" />
-                <RowDefinition Height="1.5*" />
-            </Grid.RowDefinitions>
-
-            <Border
-                Grid.Row="0"
-                BorderBrush="Black"
-                BorderThickness="0,0,0,5">
-                <Grid Margin="20">
-                    <TextBlock
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Text="理髮區" />
-
-                    <StackPanel
-                        Margin="120,0,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <Ellipse
-                            x:Name="BarberShape"
-                            Width="70"
-                            Height="70"
-                            Margin="0,0,15,0"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            x:Name="ChairShape"
-                            Width="70"
-                            Height="70"
-                            Fill="Black"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                    </StackPanel>
-
-                    <StackPanel
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                        <Border
-                            Height="45"
-                            Margin="0,0,20,0"
-                            Padding="15,5"
-                            VerticalAlignment="Center"
-                            BorderBrush="Black"
-                            BorderThickness="4"
-                            CornerRadius="10">
-                            <TextBlock
-                                x:Name="TopWaitCountText"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="等候人數" />
-                        </Border>
-
-                        <Grid Width="70" Height="70">
-                            <Ellipse
-                                Fill="White"
-                                Stroke="Black"
-                                StrokeThickness="5" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                FontWeight="Bold"
-                                Text="clock" />
-                        </Grid>
-                    </StackPanel>
-
-                    <Border
-                        Margin="0,0,0,10"
-                        Padding="20,10"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        BorderBrush="Black"
-                        BorderThickness="4">
-                        <TextBlock
-                            x:Name="BarberStatusText"
-                            FontSize="18"
-                            FontWeight="Bold"
-                            Text="理髮中..." />
-                    </Border>
-                </Grid>
-            </Border>
-
-            <Border
-                Grid.Row="1"
-                BorderBrush="Black"
-                BorderThickness="0,0,0,5">
-                <Grid Margin="20">
-                    <TextBlock
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        FontSize="26"
-                        FontWeight="Bold"
-                        Text="等候區" />
-
-                    <StackPanel
-                        x:Name="WaitingChairsPanel"
-                        Margin="80,0,0,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                        <Ellipse
-                            Width="55"
-                            Height="55"
-                            Margin="8"
-                            Fill="White"
-                            Stroke="Black"
-                            StrokeThickness="5" />
-                    </StackPanel>
-
-                    <Button
-                        x:Name="ShopStatusButton"
-                        Width="120"
-                        Height="45"
-                        Margin="0,0,0,-5"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Background="White"
-                        BorderBrush="Black"
-                        BorderThickness="4"
-                        Content="OPEN?Close?"
-                        FontSize="14"
-                        FontWeight="Bold" />
-                </Grid>
-            </Border>
-
-            <Grid Grid.Row="2" Margin="20">
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    FontSize="26"
-                    FontWeight="Bold"
-                    Text="店外" />
-
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock
-                        Margin="0,0,0,5"
-                        HorizontalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="按鈕" />
-                    <Button
-                        x:Name="ForceCustomerButton"
-                        Width="180"
-                        Height="60"
-                        Background="Transparent"
-                        BorderThickness="0">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border
-                                    Background="White"
-                                    BorderBrush="Black"
-                                    BorderThickness="5"
-                                    CornerRadius="30">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="22"
-                                        FontWeight="Bold"
-                                        Text="強制來客" />
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Grid>
-
-        <Grid Grid.Column="1" Margin="30">
-            <TextBlock
-                Margin="0,20,0,0"
-                HorizontalAlignment="Center"
-                FontSize="26"
-                FontWeight="Bold"
-                Text="統計區" />
-
-            <StackPanel
-                Margin="10,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center">
-                <TextBlock
-                    x:Name="StatWaitingText"
-                    Margin="0,15"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Text="等候人數：" />
-                <TextBlock
-                    x:Name="StatFinishedText"
-                    Margin="0,15"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Text="剪完人數：" />
-                <TextBlock
-                    x:Name="StatTurnedAwayText"
-                    Margin="0,15"
-                    FontSize="20"
-                    FontWeight="Bold"
-                    Text="氣走人數：" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="15">
+            <Label Content="理髮區" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,35,0,0">
+                <Border BorderBrush="Blue" BorderThickness="3" CornerRadius="10" Width="80" Height="80" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="Red" BorderThickness="3" CornerRadius="10" Width="85" Height="80" Margin="5">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="理髮師狀態" FontSize="14" Width="80" TextAlignment="Center"/>
+                            <Separator Background="Red" Height="2" Margin="0"/>
+                            <TextBlock Text="睡覺中" FontSize="16" Width="80" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
             </StackPanel>
-        </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="15">
+            <Label Content="等候區" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
+            <Border HorizontalAlignment="Right" BorderBrush="Red" BorderThickness="2" Margin="0,0,20,0">
+                <StackPanel>
+                    <TextBlock Text="顧客編號" FontSize="16" Width="80" TextAlignment="Center"/>
+                    <Separator Background="Red" Height="2" Margin="0"/>
+                    <TextBlock Text="0" FontSize="16" Width="80" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
+                    <Grid>
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                    </Grid>
+                </Border>
+            </StackPanel>
+            
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Margin="15">
+            <Label Content="街道" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
+            <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="增加客人" FontSize="20" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
+                  VerticalScrollBarVisibility="Auto">
+            <StackPanel >
+                <ItemsControl x:Name="MessageList" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
