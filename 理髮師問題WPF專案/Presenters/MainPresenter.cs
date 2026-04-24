@@ -19,7 +19,7 @@ namespace 理髮師問題WPF專案.Presenters
     {
         IMainView view;
         public ConcurrentQueue<ModelCustomer> waitingList { get; set; } = new ConcurrentQueue<ModelCustomer>();
-        private SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+        private AutoResetEvent autoReset = new AutoResetEvent(false);
         int CustomerLeaved = 0;
         public SalonChair chair01 = new SalonChair();
         Object objCallBarber = new Object();
@@ -38,13 +38,13 @@ namespace 理髮師問題WPF專案.Presenters
                 {
                     if (waitingList.Count == 0)
                     {
+
                         view.AddMessage("目前沒有顧客，理髮師坐在理髮椅上睡著了。");
-                        Thread.Sleep(2000);
                         isBarberSleeping = true;
                         view.ReflashSalonChair(Enums.BarberStatus.睡覺中);
-                        semaphore = new SemaphoreSlim(0, 1);
+                        autoReset.WaitOne();
                     }
-                    semaphore.Wait();
+
                     if (isBarberSleeping == true)
                     {
                         view.AddMessage("顧客喚醒理髮師，理髮師準備中…");
@@ -65,7 +65,6 @@ namespace 理髮師問題WPF專案.Presenters
                     await chair01.DoHairCut(customer);
                     view.AddMessage($"來賓 {customer.ID} 號理髮完成！！");
                     view.ReflashSalonChair(Enums.BarberStatus.準備中);
-                    semaphore.Release();
                 }
             });
         }
@@ -88,8 +87,7 @@ namespace 理髮師問題WPF專案.Presenters
                 view.AddMessage($"顧客編號 {customer.ID} 進門了。");
                 view.ReflashWaitingList(waitingList);
 
-                if (isBarberSleeping == true)
-                    semaphore.Release(); // 喚醒理髮師
+                autoReset.Set(); // 喚醒理髮師
 
             }
         }
