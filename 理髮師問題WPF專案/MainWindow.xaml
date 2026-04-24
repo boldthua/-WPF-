@@ -7,88 +7,264 @@
     Height="600">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"></ColumnDefinition>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="1.5*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="3*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="15">
-            <Label Content="理髮區" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,35,0,0">
-                <Border BorderBrush="Blue" BorderThickness="3" CornerRadius="10" Width="80" Height="80" Margin="5">
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="15">
+            <Label
+                Width="75"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Content="理髮區"
+                FontSize="18"
+                FontWeight="Bold" />
+            <StackPanel
+                Margin="0,35,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Border
+                    Width="80"
+                    Height="80"
+                    Margin="5"
+                    BorderBrush="Blue"
+                    BorderThickness="3"
+                    CornerRadius="10">
                     <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  上半部  -->
+                        <Border
+                                        Grid.Row="0"
+                                        Margin="0,0,0,1"
+                                        CornerRadius="10,10,0,0">
+                            <!--  ⭐ 關鍵  -->
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="White" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SalonChair.Chair}" Value="客">
+                                            <Setter Property="Background" Value="DarkBlue" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
+                            <Label
+                                            Padding="0"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Content="{Binding SalonChair.Chair}"
+                                            FontSize="22">
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Foreground" Value="DarkBlue" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SalonChair.Chair}" Value="客">
+                                                <Setter Property="Foreground" Value="White" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                        </Border>
+
+                        <!--  中線  -->
+                        <Rectangle Grid.Row="1" Fill="DarkBlue" />
+
+                        <!--  下半部  -->
+                        <Label
+                                        Grid.Row="2"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="{Binding SalonChair.CustID}"
+                                        FontSize="16" />
                     </Grid>
                 </Border>
-                <Border BorderBrush="Red" BorderThickness="3" CornerRadius="10" Width="85" Height="80" Margin="5">
+                <Border
+                    Width="85"
+                    Height="80"
+                    Margin="5"
+                    BorderBrush="Red"
+                    BorderThickness="3"
+                    CornerRadius="10">
                     <Grid>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="理髮師狀態" FontSize="14" Width="80" TextAlignment="Center"/>
-                            <Separator Background="Red" Height="2" Margin="0"/>
-                            <TextBlock Text="睡覺中" FontSize="16" Width="80" TextAlignment="Center"/>
+                            <TextBlock
+                                Width="80"
+                                FontSize="14"
+                                Text="理髮師狀態"
+                                TextAlignment="Center" />
+                            <Separator
+                                Height="2"
+                                Margin="0"
+                                Background="Red" />
+                            <TextBlock
+                                Width="80"
+                                FontSize="16"
+                                Text="{Binding SalonChair.Barber}"
+                                TextAlignment="Center" />
                         </StackPanel>
                     </Grid>
                 </Border>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Margin="15">
-            <Label Content="等候區" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
-            <Border HorizontalAlignment="Right" BorderBrush="Red" BorderThickness="2" Margin="0,0,20,0">
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="15">
+            <Label
+                Width="75"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Content="等候區"
+                FontSize="18"
+                FontWeight="Bold" />
+            <Border
+                Margin="0,0,20,0"
+                HorizontalAlignment="Right"
+                BorderBrush="Red"
+                BorderThickness="2">
                 <StackPanel>
-                    <TextBlock Text="顧客編號" FontSize="16" Width="80" TextAlignment="Center"/>
-                    <Separator Background="Red" Height="2" Margin="0"/>
-                    <TextBlock Text="0" FontSize="16" Width="80" TextAlignment="Center"/>
+                    <TextBlock
+                        Width="80"
+                        FontSize="16"
+                        Text="現在叫號"
+                        TextAlignment="Center" />
+                    <Separator
+                        Height="2"
+                        Margin="0"
+                        Background="Red" />
+                    <TextBlock
+                        Width="80"
+                        FontSize="16"
+                        Text="{Binding SalonChair.CallingID}"
+                        TextAlignment="Center" />
                 </StackPanel>
             </Border>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-                <Border BorderBrush="DarkBlue" BorderThickness="2" CornerRadius="10" Width="60" Height="60" Margin="5">
-                    <Grid>
-                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="25">空</Label>
-                    </Grid>
-                </Border>
-            </StackPanel>
-            
+
+            <ItemsControl ItemsSource="{Binding WaitingList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel
+                            Margin="30,0,0,0"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Border
+                                Width="60"
+                                Height="60"
+                                Margin="5"
+                                BorderBrush="DarkBlue"
+                                BorderThickness="2"
+                                CornerRadius="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="2" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <!--  上半部  -->
+                                    <Border
+                                        Grid.Row="0"
+                                        Margin="0,0,0,1"
+                                        CornerRadius="10,10,0,0">
+                                        <!--  ⭐ 關鍵  -->
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Seated}" Value="客">
+                                                        <Setter Property="Background" Value="DarkBlue" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <Label
+                                            Padding="0"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Content="{Binding Seated}"
+                                            FontSize="22">
+                                            <Label.Style>
+                                                <Style TargetType="Label">
+                                                    <Setter Property="Foreground" Value="DarkBlue" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Seated}" Value="客">
+                                                            <Setter Property="Foreground" Value="White" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Label.Style>
+                                        </Label>
+                                    </Border>
+
+                                    <!--  中線  -->
+                                    <Rectangle Grid.Row="1" Fill="DarkBlue" />
+
+                                    <!--  下半部  -->
+                                    <Label
+                                        Grid.Row="2"
+                                        Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="{Binding ShowingID}"
+                                        FontSize="16" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="0" Margin="15">
-            <Label Content="街道" Width="75" HorizontalAlignment="Left" HorizontalContentAlignment="Center"  FontSize="18" FontWeight="Bold" />
-            <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="增加客人" FontSize="20" />
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="15">
+            <Label
+                Width="75"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Content="街道"
+                FontSize="18"
+                FontWeight="Bold" />
+            <Button
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Command="{Binding AddCommand}"
+                Content="增加客人"
+                FontSize="20" />
         </StackPanel>
 
-        <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
-                  VerticalScrollBarVisibility="Auto">
-            <StackPanel >
-                <ItemsControl x:Name="MessageList" />
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Message}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

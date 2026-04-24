@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using 理髮師問題WPF專案.ViewModels;
+
 
 namespace 理髮師問題WPF專案
 {
@@ -23,6 +25,8 @@ namespace 理髮師問題WPF專案
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new MainViewModel();
         }
     }
 }

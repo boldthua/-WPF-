@@ -1,9 +1,8 @@
-﻿<Application x:Class="理髮師問題WPF專案.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:理髮師問題WPF專案"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+﻿<Application
+    x:Class="理髮師問題WPF專案.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:理髮師問題WPF專案"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources />
 </Application>
