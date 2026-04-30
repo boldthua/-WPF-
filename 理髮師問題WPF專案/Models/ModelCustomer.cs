@@ -26,5 +26,10 @@ namespace 理髮師問題WPF專案.Models
 
             time = random.Next(3, 6) * 1000;
         }
+
+        public static void Reset()
+        {
+            counter = 1;
+        }
     }
 }

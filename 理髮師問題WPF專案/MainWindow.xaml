@@ -2,216 +2,485 @@
     x:Class="理髮師問題WPF專案.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Sleeping Barber Simulator"
-    Width="900"
-    Height="600">
+    Title="🪒 Classic Barber Shop Simulator - 經典理髮店模擬器 💈"
+    Width="1000"
+    Height="700"
+    Background="#F5E6D3">
+
+    <Window.Resources>
+        <!-- 經典理髮店配色 -->
+        <SolidColorBrush x:Key="BarberRed" Color="#DC143C"/>
+        <SolidColorBrush x:Key="BarberWhite" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BarberBlue" Color="#002868"/>
+        <SolidColorBrush x:Key="VintageBeige" Color="#F5E6D3"/>
+        <SolidColorBrush x:Key="WoodBrown" Color="#8B4513"/>
+        <SolidColorBrush x:Key="DarkWood" Color="#654321"/>
+        <SolidColorBrush x:Key="GoldAccent" Color="#FFD700"/>
+
+        <!-- 旋轉柱漸變（內部螺旋條紋） -->
+        <LinearGradientBrush x:Key="BarberPoleStripe" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#DC143C" Offset="0"/>
+            <GradientStop Color="#FFFFFF" Offset="0.33"/>
+            <GradientStop Color="#002868" Offset="0.66"/>
+            <GradientStop Color="#DC143C" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- 藍白條紋背景 -->
+        <LinearGradientBrush x:Key="BlueWhiteStripe" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#002868" Offset="0"/>
+            <GradientStop Color="#FFFFFF" Offset="0.2"/>
+            <GradientStop Color="#002868" Offset="0.4"/>
+            <GradientStop Color="#FFFFFF" Offset="0.6"/>
+            <GradientStop Color="#002868" Offset="0.8"/>
+            <GradientStop Color="#FFFFFF" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- 木紋效果 -->
+        <LinearGradientBrush x:Key="WoodGrain" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#8B4513" Offset="0"/>
+            <GradientStop Color="#A0522D" Offset="0.3"/>
+            <GradientStop Color="#8B4513" Offset="0.6"/>
+            <GradientStop Color="#654321" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- 陰影效果 -->
+        <DropShadowEffect x:Key="VintageShadow" 
+                          Color="#654321" 
+                          BlurRadius="12" 
+                          ShadowDepth="4" 
+                          Opacity="0.4"/>
+
+        <DropShadowEffect x:Key="GoldGlow" 
+                          Color="#FFD700" 
+                          BlurRadius="15" 
+                          ShadowDepth="0" 
+                          Opacity="0.6"/>
+
+        <!-- 經典理髮店按鈕樣式 -->
+        <Style x:Key="VintageButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource WoodGrain}"/>
+            <Setter Property="Foreground" Value="{StaticResource VintageBeige}"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DarkWood}"/>
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Effect" Value="{StaticResource VintageShadow}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                           To="1.05" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                           To="1.05" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleX)"
+                                                           To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
+                                                           To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 理髮椅樣式 -->
+        <Style x:Key="BarberChairBorder" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource VintageBeige}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BarberBlue}"/>
+            <Setter Property="BorderThickness" Value="4"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect" Value="{StaticResource VintageShadow}"/>
+        </Style>
+
+        <!-- 等候椅樣式 -->
+        <Style x:Key="WaitingChairBorder" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource VintageBeige}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BarberRed}"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#654321" BlurRadius="8" ShadowDepth="3" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#F5E6D3" Offset="0"/>
+                <GradientStop Color="#E8D4B8" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*" />
             <ColumnDefinition Width="1.5*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="4*" />
             <RowDefinition Height="3*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <StackPanel
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="15">
-            <Label
-                Width="75"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                Content="理髮區"
-                FontSize="18"
-                FontWeight="Bold" />
-            <StackPanel
-                Margin="0,35,0,0"
-                HorizontalAlignment="Center"
-                Orientation="Horizontal">
-                <Border
-                    Width="80"
-                    Height="80"
-                    Margin="5"
-                    BorderBrush="Blue"
-                    BorderThickness="3"
-                    CornerRadius="10">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="2" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
 
-                        <!--  上半部  -->
-                        <Border
-                                        Grid.Row="0"
-                                        Margin="0,0,0,1"
-                                        CornerRadius="10,10,0,0">
-                            <!--  ⭐ 關鍵  -->
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="White" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SalonChair.Chair}" Value="客">
-                                            <Setter Property="Background" Value="DarkBlue" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+        <!-- 經典理髮店招牌 - 藍白條紋背景 -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2"
+                Background="{StaticResource BlueWhiteStripe}"
+                Padding="20,15"
+                Margin="10,10,10,5"
+                CornerRadius="0"
+                BorderThickness="0,0,0,5"
+                BorderBrush="{StaticResource GoldAccent}">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="20" ShadowDepth="5" Opacity="0.5"/>
+            </Border.Effect>
 
-                            <Label
-                                            Padding="0"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Content="{Binding SalonChair.Chair}"
-                                            FontSize="22">
-                                <Label.Style>
-                                    <Style TargetType="Label">
-                                        <Setter Property="Foreground" Value="DarkBlue" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 左側旋轉柱 💈 內部條紋旋轉 -->
+                <Viewbox Grid.Column="0" Width="50" Height="50" Margin="0,0,20,0">
+                    <Grid Width="100" Height="100">
+                        <!-- 固定的 💈 外殼 -->
+                        <TextBlock Text="💈" FontSize="100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <!-- 旋轉的內部條紋 -->
+                        <Border Width="30" Height="80"
+                                Background="{StaticResource BarberPoleStripe}"
+                                CornerRadius="15"
+                                Opacity="0.7"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ClipToBounds="True">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform Y="0"/>
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)"
+                                                           From="0" To="-80" Duration="0:0:2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+                        </Border>
+                    </Grid>
+                </Viewbox>
+
+                <!-- 中央招牌文字 -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="💈 CLASSIC BARBER SHOP 💈" 
+                              FontSize="32"
+                              FontFamily="Georgia"
+                              FontWeight="ExtraBold"
+                              Foreground="{StaticResource GoldAccent}"
+                              HorizontalAlignment="Center"
+                              Effect="{StaticResource GoldGlow}"/>
+                    <TextBlock Text="經典理髮店模擬器" 
+                              FontSize="18"
+                              FontFamily="Microsoft YaHei"
+                              FontWeight="SemiBold"
+                              Foreground="{StaticResource BarberBlue}"
+                              HorizontalAlignment="Center"
+                              Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- 右側旋轉柱 💈 內部條紋旋轉 -->
+                <Viewbox Grid.Column="2" Width="50" Height="50" Margin="20,0,0,0">
+                    <Grid Width="100" Height="100">
+                        <!-- 固定的 💈 外殼 -->
+                        <TextBlock Text="💈" FontSize="100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <!-- 旋轉的內部條紋 -->
+                        <Border Width="30" Height="80"
+                                Background="{StaticResource BarberPoleStripe}"
+                                CornerRadius="15"
+                                Opacity="0.7"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ClipToBounds="True">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform Y="0"/>
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)"
+                                                           From="0" To="-80" Duration="0:0:2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+                        </Border>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+        </Border>
+
+        <!-- 理髮區 -->
+        <Border Grid.Row="1" Grid.Column="0"
+                Background="White"
+                Margin="15,10,15,10"
+                CornerRadius="10"
+                BorderThickness="4"
+                BorderBrush="{StaticResource WoodBrown}"
+                Effect="{StaticResource VintageShadow}">
+            <StackPanel Margin="20">
+                <!-- 理髮區標題 -->
+                <Border Background="{StaticResource BarberBlue}"
+                        CornerRadius="5"
+                        Padding="15,8"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,20">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✂️ " FontSize="20" VerticalAlignment="Center"/>
+                        <TextBlock Text="理髮區" 
+                                  FontSize="20"
+                                  FontFamily="Microsoft YaHei"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <!-- 理髮椅 -->
+                    <Border Width="110"
+                            Height="110"
+                            Margin="15"
+                            Style="{StaticResource BarberChairBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- 上半部 - 客人 -->
+                            <Border Grid.Row="0" Margin="0,0,0,2" CornerRadius="8,8,0,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="White"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding SalonChair.Chair}" Value="客">
-                                                <Setter Property="Foreground" Value="White" />
+                                                <Setter Property="Background" Value="{StaticResource BarberBlue}"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </Label.Style>
-                            </Label>
-                        </Border>
+                                </Border.Style>
+                                <Label Padding="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      Content="{Binding SalonChair.Chair}"
+                                      FontSize="28"
+                                      FontFamily="Georgia"
+                                      FontWeight="Bold">
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Foreground" Value="{StaticResource BarberBlue}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SalonChair.Chair}" Value="客">
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+                            </Border>
 
-                        <!--  中線  -->
-                        <Rectangle Grid.Row="1" Fill="DarkBlue" />
+                            <!-- 分隔線 -->
+                            <Rectangle Grid.Row="1" Fill="{StaticResource BarberBlue}"/>
 
-                        <!--  下半部  -->
-                        <Label
-                                        Grid.Row="2"
-                                        Padding="0"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Content="{Binding SalonChair.CustID}"
-                                        FontSize="16" />
-                    </Grid>
-                </Border>
-                <Border
-                    Width="85"
-                    Height="80"
-                    Margin="5"
-                    BorderBrush="Red"
-                    BorderThickness="3"
-                    CornerRadius="10">
-                    <Grid>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock
-                                Width="80"
-                                FontSize="14"
-                                Text="理髮師狀態"
-                                TextAlignment="Center" />
-                            <Separator
-                                Height="2"
-                                Margin="0"
-                                Background="Red" />
-                            <TextBlock
-                                Width="80"
-                                FontSize="16"
-                                Text="{Binding SalonChair.Barber}"
-                                TextAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </StackPanel>
-        </StackPanel>
+                            <!-- 下半部 - 號碼 -->
+                            <Border Grid.Row="2" Background="#F8F8F8" CornerRadius="0,0,8,8">
+                                <Label Padding="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      Content="{Binding SalonChair.CustID}"
+                                      FontSize="20"
+                                      FontFamily="Arial"
+                                      FontWeight="Bold"
+                                      Foreground="{StaticResource DarkWood}"/>
+                            </Border>
+                        </Grid>
+                    </Border>
 
-        <StackPanel
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="15">
-            <Label
-                Width="75"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                Content="等候區"
-                FontSize="18"
-                FontWeight="Bold" />
-            <Border
-                Margin="0,0,20,0"
-                HorizontalAlignment="Right"
-                BorderBrush="Red"
-                BorderThickness="2">
-                <StackPanel>
-                    <TextBlock
-                        Width="80"
-                        FontSize="16"
-                        Text="現在叫號"
-                        TextAlignment="Center" />
-                    <Separator
-                        Height="2"
-                        Margin="0"
-                        Background="Red" />
-                    <TextBlock
-                        Width="80"
-                        FontSize="16"
-                        Text="{Binding SalonChair.CallingID}"
-                        TextAlignment="Center" />
+                    <!-- 理髮師狀態牌 -->
+                    <Border Width="120"
+                            Height="110"
+                            Margin="15"
+                            Background="{StaticResource VintageBeige}"
+                            BorderBrush="{StaticResource BarberRed}"
+                            BorderThickness="4"
+                            CornerRadius="8"
+                            Effect="{StaticResource VintageShadow}">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Center">
+                                <Border Background="{StaticResource BarberRed}"
+                                       Padding="8,5"
+                                       Margin="0,0,0,8">
+                                    <TextBlock Text="理髮師狀態"
+                                              FontSize="16"
+                                              FontFamily="Microsoft YaHei"
+                                              FontWeight="Bold"
+                                              Foreground="White"
+                                              TextAlignment="Center"/>
+                                </Border>
+
+                                <TextBlock Text="{Binding SalonChair.Barber}"
+                                          FontSize="22"
+                                          FontFamily="Microsoft YaHei"
+                                          FontWeight="Bold"
+                                          Foreground="{StaticResource BarberRed}"
+                                          TextAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </StackPanel>
-            </Border>
+            </StackPanel>
+        </Border>
 
+        <!-- 等候區 -->
+        <Border Grid.Row="2" Grid.Column="0"
+                Background="White"
+                Margin="15,10,15,10"
+                CornerRadius="10"
+                BorderThickness="4"
+                BorderBrush="{StaticResource WoodBrown}"
+                Effect="{StaticResource VintageShadow}">
+            <StackPanel Margin="20">
+                <Grid Margin="0,0,0,10">
+                    <Border Background="{StaticResource BarberRed}"
+                            CornerRadius="5"
+                            Padding="12,6"
+                            HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🪑 " FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="等候區" 
+                                      FontSize="16"
+                                      FontFamily="Microsoft YaHei"
+                                      FontWeight="Bold"
+                                      Foreground="White"
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
 
-            <ItemsControl ItemsSource="{Binding WaitingList}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel
-                            Margin="30,0,0,0"
-                            HorizontalAlignment="Center"
-                            Orientation="Horizontal">
-                            <Border
-                                Width="60"
-                                Height="60"
-                                Margin="5"
-                                BorderBrush="DarkBlue"
-                                BorderThickness="2"
-                                CornerRadius="10">
+                    <!-- 叫號牌 - 縮小版 -->
+                    <Border HorizontalAlignment="Right"
+                            Background="{StaticResource GoldAccent}"
+                            BorderBrush="{StaticResource DarkWood}"
+                            BorderThickness="2"
+                            CornerRadius="4"
+                            Padding="8,5"
+                            Effect="{StaticResource GoldGlow}">
+                        <StackPanel>
+                            <TextBlock Text="現在叫號"
+                                      FontSize="11"
+                                      FontFamily="Microsoft YaHei"
+                                      FontWeight="Bold"
+                                      Foreground="{StaticResource DarkWood}"
+                                      TextAlignment="Center"/>
+                            <Separator Height="1.5" Margin="0,2" Background="{StaticResource DarkWood}"/>
+                            <TextBlock Text="{Binding SalonChair.CallingID}"
+                                      FontSize="18"
+                                      FontFamily="Arial Black"
+                                      FontWeight="ExtraBold"
+                                      Foreground="{StaticResource BarberRed}"
+                                      TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding WaitingList}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="75"
+                                    Height="75"
+                                    Margin="8"
+                                    Style="{StaticResource WaitingChairBorder}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
-                                        <RowDefinition Height="2" />
+                                        <RowDefinition Height="3" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
-                                    <!--  上半部  -->
-                                    <Border
-                                        Grid.Row="0"
-                                        Margin="0,0,0,1"
-                                        CornerRadius="10,10,0,0">
-                                        <!--  ⭐ 關鍵  -->
+                                    <!-- 上半部 -->
+                                    <Border Grid.Row="0" Margin="0,0,0,1" CornerRadius="6,6,0,0">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="Background" Value="White" />
+                                                <Setter Property="Background" Value="White"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Seated}" Value="客">
-                                                        <Setter Property="Background" Value="DarkBlue" />
+                                                        <Setter Property="Background" Value="{StaticResource BarberRed}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-
-                                        <Label
-                                            Padding="0"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Content="{Binding Seated}"
-                                            FontSize="22">
+                                        <Label Padding="0"
+                                              HorizontalContentAlignment="Center"
+                                              VerticalContentAlignment="Center"
+                                              Content="{Binding Seated}"
+                                              FontSize="24"
+                                              FontFamily="Georgia"
+                                              FontWeight="Bold">
                                             <Label.Style>
                                                 <Style TargetType="Label">
-                                                    <Setter Property="Foreground" Value="DarkBlue" />
+                                                    <Setter Property="Foreground" Value="{StaticResource BarberRed}"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Seated}" Value="客">
-                                                            <Setter Property="Foreground" Value="White" />
+                                                            <Setter Property="Foreground" Value="White"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -219,53 +488,158 @@
                                         </Label>
                                     </Border>
 
-                                    <!--  中線  -->
-                                    <Rectangle Grid.Row="1" Fill="DarkBlue" />
+                                    <!-- 分隔線 -->
+                                    <Rectangle Grid.Row="1" Fill="{StaticResource BarberRed}"/>
 
-                                    <!--  下半部  -->
-                                    <Label
-                                        Grid.Row="2"
-                                        Padding="0"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        Content="{Binding ShowingID}"
-                                        FontSize="16" />
+                                    <!-- 下半部 -->
+                                    <Border Grid.Row="2" Background="#F8F8F8" CornerRadius="0,0,6,6">
+                                        <Label Padding="0"
+                                              HorizontalContentAlignment="Center"
+                                              VerticalContentAlignment="Center"
+                                              Content="{Binding ShowingID}"
+                                              FontSize="18"
+                                              FontFamily="Arial"
+                                              FontWeight="Bold"
+                                              Foreground="{StaticResource DarkWood}"/>
+                                    </Border>
                                 </Grid>
                             </Border>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </StackPanel>
-
-        <StackPanel
-            Grid.Row="2"
-            Grid.Column="0"
-            Margin="15">
-            <Label
-                Width="75"
-                HorizontalAlignment="Left"
-                HorizontalContentAlignment="Center"
-                Content="街道"
-                FontSize="18"
-                FontWeight="Bold" />
-            <Button
-                HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Command="{Binding AddCommand}"
-                Content="增加客人"
-                FontSize="20" />
-        </StackPanel>
-
-        <ScrollViewer
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="1"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <ItemsControl ItemsSource="{Binding Message}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
-        </ScrollViewer>
+        </Border>
+
+        <!-- 街道控制區 - 移除多餘空白 -->
+        <Border Grid.Row="3" Grid.Column="0"
+                Background="White"
+                Margin="15,10,15,15"
+                CornerRadius="10"
+                BorderThickness="4"
+                BorderBrush="{StaticResource WoodBrown}"
+                Effect="{StaticResource VintageShadow}">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0"
+                        Background="{StaticResource BarberBlue}"
+                        CornerRadius="5"
+                        Padding="12,6"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🚶 " FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="街道控制" 
+                                  FontSize="16"
+                                  FontFamily="Microsoft YaHei"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Style="{StaticResource VintageButton}"
+                            Padding="16,8"
+                            Margin="6"
+                            Command="{Binding AddCommand}"
+                            FontSize="14">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👤 " FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="增加客人" FontFamily="Microsoft YaHei"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource VintageButton}"
+                            Padding="16,8"
+                            Margin="6"
+                            Command="{Binding Add15Command}"
+                            FontSize="14">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👥 " FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="增加15個客人" FontFamily="Microsoft YaHei"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource VintageButton}"
+                            Padding="16,8"
+                            Margin="6"
+                            Command="{Binding AddPer500msCommand}"
+                            Content="{Binding TextAutoAdding}"
+                            FontSize="14"
+                            FontFamily="Microsoft YaHei"/>
+
+                    <Button Style="{StaticResource VintageButton}"
+                            Padding="16,8"
+                            Margin="6"
+                            Command="{Binding ProgramReset}"
+                            FontSize="14">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔄 " FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="全部重置" FontFamily="Microsoft YaHei"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 訊息日誌區 -->
+        <Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="1"
+                Background="White"
+                Margin="15,10,15,15"
+                CornerRadius="10"
+                BorderThickness="4"
+                BorderBrush="{StaticResource WoodBrown}"
+                Effect="{StaticResource VintageShadow}">
+            <Grid Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0"
+                        Background="{StaticResource BarberRed}"
+                        CornerRadius="5"
+                        Padding="12,8"
+                        Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="📋 " FontSize="18" VerticalAlignment="Center"/>
+                        <TextBlock Text="訊息日誌" 
+                                  FontSize="18"
+                                  FontFamily="Microsoft YaHei"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1"
+                             VerticalScrollBarVisibility="Auto"
+                             Background="#FFFEF5"
+                             Padding="8">
+                    <ItemsControl ItemsSource="{Binding Message}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource VintageBeige}"
+                                       BorderBrush="{StaticResource DarkWood}"
+                                       BorderThickness="1"
+                                       CornerRadius="3"
+                                       Padding="8,5"
+                                       Margin="0,2">
+                                    <TextBlock Text="{Binding}"
+                                              FontSize="12"
+                                              FontFamily="Consolas"
+                                              Foreground="{StaticResource DarkWood}"
+                                              TextWrapping="Wrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

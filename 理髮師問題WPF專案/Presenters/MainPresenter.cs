@@ -9,13 +9,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using 理髮師問題WPF專案.Models;
 using 理髮師問題WPF專案.Utilities;
 using static 理髮師問題WPF專案.Contracts.MainContract;
 
 namespace 理髮師問題WPF專案.Presenters
 {
-    internal class MainPresenter : IMainPresenter
+    internal class MainPresenter : IMainPresenter, IDisposable
     {
         IMainView view;
         public ConcurrentQueue<ModelCustomer> waitingList { get; set; } = new ConcurrentQueue<ModelCustomer>();
@@ -24,49 +25,68 @@ namespace 理髮師問題WPF專案.Presenters
         public SalonChair chair01 = new SalonChair();
         Object objCallBarber = new Object();
         bool isBarberSleeping = false;
+        private bool disposableValue = false;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainPresenter(IMainView view)
         {
             this.view = view;
         }
-        public async void StartHaircut()
+        public async void StartHaircut(CancellationToken token)
         {
+            chair01.chairNumber = 0;//計號器歸0
             await Task.Run(async () =>
             {
-                while (true)
+                try
                 {
-                    if (waitingList.Count == 0)
+                    while (!token.IsCancellationRequested)
                     {
+                        if (waitingList.Count == 0)
+                        {
 
-                        view.AddMessage("目前沒有顧客，理髮師坐在理髮椅上睡著了。");
-                        isBarberSleeping = true;
-                        view.ReflashSalonChair(Enums.BarberStatus.睡覺中);
-                        autoReset.WaitOne();
-                    }
+                            view.AddMessage("目前沒有顧客，理髮師坐在理髮椅上睡著了。");
+                            isBarberSleeping = true;
+                            view.ReflashSalonChair(Enums.BarberStatus.睡覺中);
 
-                    if (isBarberSleeping == true)
-                    {
-                        view.AddMessage("顧客喚醒理髮師，理髮師準備中…");
+                            autoReset.WaitOne();
+                        }
+
+                        if (token.IsCancellationRequested)
+                            continue;
+
+                        if (isBarberSleeping == true)
+                        {
+                            view.AddMessage("顧客喚醒理髮師，理髮師準備中…");
+                            view.ReflashSalonChair(Enums.BarberStatus.準備中);
+                            isBarberSleeping = false;
+                        }
+                        else
+                            view.AddMessage("理髮師清理座位，準備中…");
+
+                        await Task.Delay(3000, token);
+                        if (token.IsCancellationRequested)
+                            continue;
+
+                        view.AddMessage("理髮師準備完成，開始叫號。");
+                        // 開始理髮
+                        if (!waitingList.TryDequeue(out ModelCustomer customer) && customer == null)
+                            continue;
+                        view.ReflashWaitingList(waitingList);
+                        view.ReflashSalonChair(customer);
+                        view.AddMessage($"來賓號碼 {customer.ID} 號請入內理髮。");
+                        view.AddMessage($"來賓 {customer.ID} 號理髮中…");
+                        await chair01.DoHairCut(customer, token);
+                        if (token.IsCancellationRequested)
+                            continue;
+                        view.AddMessage($"來賓 {customer.ID} 號理髮完成！！");
                         view.ReflashSalonChair(Enums.BarberStatus.準備中);
-                        isBarberSleeping = false;
                     }
-                    else
-                        view.AddMessage("理髮師清理座位，準備中…");
-
-                    await Task.Delay(3000);
-                    view.AddMessage("理髮師準備完成，開始叫號。");
-                    // 開始理髮
-                    waitingList.TryDequeue(out ModelCustomer customer);
-                    view.ReflashWaitingList(waitingList);
-                    view.ReflashSalonChair(customer);
-                    view.AddMessage($"來賓號碼 {customer.ID} 號請入內理髮。");
-                    view.AddMessage($"來賓 {customer.ID} 號理髮中…");
-                    await chair01.DoHairCut(customer);
-                    view.AddMessage($"來賓 {customer.ID} 號理髮完成！！");
-                    view.ReflashSalonChair(Enums.BarberStatus.準備中);
                 }
-            });
+                catch (OperationCanceledException)
+                {
+
+                }
+            }, token);
         }
 
         public void AddCustomer()
@@ -92,5 +112,37 @@ namespace 理髮師問題WPF專案.Presenters
             }
         }
 
+        public void Reset()
+        {
+            autoReset.Set();
+            waitingList = new ConcurrentQueue<ModelCustomer>();
+            CustomerLeaved = 0;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // 非受控
+            if (!disposableValue)
+            {
+                if (disposing)
+                {
+                    if (autoReset != null)
+                    {
+                        autoReset.Set();
+                        autoReset.Dispose();
+                    }
+                    PropertyChanged = null;
+                    waitingList = null;
+                    view = null;
+                }
+                disposableValue = true;
+            }
+        }
     }
 }

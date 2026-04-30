@@ -19,12 +19,11 @@ namespace 理髮師問題WPF專案.Utilities
 
         }
 
-        public async Task DoHairCut(ModelCustomer customer)
+        public async Task DoHairCut(ModelCustomer customer, CancellationToken token)
         {
             chairNumber++;
             this.customer = customer;
-            Thread.Sleep(customer.time);
+            await Task.Delay(customer.time, token);
         }
-
     }
 }

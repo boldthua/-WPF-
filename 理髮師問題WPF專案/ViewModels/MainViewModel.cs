@@ -6,7 +6,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using 理髮師問題WPF專案.Enums;
@@ -34,6 +36,13 @@ namespace 理髮師問題WPF專案
                 OnPropertyChanged();
             }
         }
+
+        private bool _isAutoAdding = false;
+        public string TextAutoAdding => _isAutoAdding ? "取消自動增加" : "自動增加客人";
+
+        public System.Threading.Timer timer = null;
+        public CancellationTokenSource tokenSource = new CancellationTokenSource();
+
         public ViewSalonChair SalonChair
         {
             get => _salonChair;
@@ -54,6 +63,10 @@ namespace 理髮師問題WPF專案
             }
         }
         public ICommand AddCommand { get; set; }
+        public ICommand Add15Command { get; set; }
+        public ICommand AddPer500msCommand { get; set; }
+
+        public ICommand ProgramReset { get; set; }
 
         public MainViewModel()
         {
@@ -68,19 +81,15 @@ namespace 理髮師問題WPF專案
                 new CustomerModel(),
             };
             SalonChair = new ViewSalonChair();
-            AddCommand = new RelayCommand(() =>
-            {
-                lock (obj) // 防止同時進門
-                {
-                    presenter.AddCustomer();
+            AddCommand = new RelayCommand(ExecuteAddCustomer);
 
-                    int countEmptySeat = 6 - WaitingList.Count;
-                    for (int i = 0; i < countEmptySeat; i++)
-                        WaitingList.Add(new CustomerModel());
-                }
-            });
+            Add15Command = new RelayCommand(() => ExecuteAdd15Customer(tokenSource.Token));
 
-            presenter.StartHaircut();//開始營業
+            AddPer500msCommand = new RelayCommand(ExecuteAutoAddCommand);
+
+            ProgramReset = new RelayCommand(ExecuteReset);
+
+            presenter.StartHaircut(tokenSource.Token);//開始營業
         }
 
         public void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -96,6 +105,15 @@ namespace 理髮師問題WPF專案
             });
         }
 
+        public bool IsAutoAdding
+        {
+            get { return _isAutoAdding; }
+            set
+            {
+                _isAutoAdding = value;
+                OnPropertyChanged(nameof(TextAutoAdding));
+            }
+        }
 
         public void ReflashWaitingList(ConcurrentQueue<ModelCustomer> waitingList)
         {
@@ -111,7 +129,17 @@ namespace 理髮師問題WPF專案
                 for (int i = 0; i < countEmptySeat; i++)
                     WaitingList.Add(new CustomerModel());
             });
+        }
 
+        public void ReflashWaitingList()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                WaitingList.Clear();
+                int countEmptySeat = 6;
+                for (int i = 0; i < countEmptySeat; i++)
+                    WaitingList.Add(new CustomerModel());
+            });
         }
 
         public void ReflashSalonChair(BarberStatus barber) //客人離座
@@ -131,6 +159,80 @@ namespace 理髮師問題WPF專案
             CustomerModel model = new CustomerModel(customer);
             SalonChair.servedCust = model;
             SalonChair.IsSeated = true;
+        }
+
+        // 按鈕們
+
+        private void ExecuteAddCustomer()
+        {
+            lock (obj) // 防止同時進門
+            {
+                presenter.AddCustomer();
+
+                int countEmptySeat = 6 - WaitingList.Count;
+                for (int i = 0; i < countEmptySeat; i++)
+                {
+                    WaitingList.Add(new CustomerModel());
+                }
+            }
+        }
+
+        //private async void ExecuteAdd15Customer()
+        //{
+        //    var tasks = new List<Task>();
+        //    for (int i = 0; i < 15; i++)
+        //    {
+        //        tasks.Add(Task.Run(() => ExecuteAddCustomer()));
+        //    }
+
+        //    await Task.WhenAll(tasks);
+        //}
+
+        private Task ExecuteAdd15Customer(CancellationToken token)
+        {
+            return Task.Run(() =>
+            Parallel.For(0, 15, new ParallelOptions() { MaxDegreeOfParallelism = 5, CancellationToken = token }, (i) =>
+            {
+
+                ExecuteAddCustomer();
+            })
+            );
+        }
+
+        private void ExecuteAutoAddCommand()
+        {
+            if (IsAutoAdding == false)
+            {
+                IsAutoAdding = true;
+                timer = new System.Threading.Timer((obj) =>
+                {
+                    ExecuteAddCustomer();
+                }, null, 0, 500);
+                return;
+            }
+            IsAutoAdding = false;
+            timer.Dispose();
+            timer = null;
+        }
+
+        private void ExecuteReset()
+        {
+            tokenSource.Cancel();
+
+            ReflashWaitingList();
+            Message.Clear();
+            if (IsAutoAdding == true)
+            {
+                IsAutoAdding = false;
+                timer.Dispose();
+                timer = null;
+            }
+            presenter.Dispose();
+            presenter = new MainPresenter(this);
+            SalonChair = new ViewSalonChair();
+            ModelCustomer.Reset();
+            tokenSource = new CancellationTokenSource();
+            presenter.StartHaircut(tokenSource.Token);
         }
     }
 }
